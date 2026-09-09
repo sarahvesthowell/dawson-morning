@@ -76,7 +76,7 @@
     display: flex; align-items: center; gap: 12px;
     background: var(--surface);
     border-radius: var(--radius);
-    padding: 8px 14px;
+    padding: 6px 14px;
     border: 2px solid transparent;
     box-shadow: 0 3px 10px rgba(61,44,78,0.07);
     transition: transform 0.15s ease, box-shadow 0.2s, opacity 0.2s, border-color 0.2s;
@@ -103,10 +103,10 @@
   .step.done .step-title { color: var(--text3); text-decoration: line-through; }
   .step-sub { font-size: 11px; color: var(--text2); margin-top: 1px; font-weight: 500; }
   .step.done .step-sub { color: var(--text3); }
-  .step-time { font-size: 9.5px; font-weight: 700; color: var(--text3); white-space: nowrap; font-variant-numeric: tabular-nums; background: rgba(61,44,78,0.05); padding: 2px 6px; border-radius: 6px; }
-  .step.done .step-time { text-decoration: line-through; }
-  .play-step .step-time { background: rgba(78,205,196,0.15); color: #2A9D93; }
-  .play-step.locked .step-time { background: rgba(61,44,78,0.05); color: var(--text3); }
+  .step-time { font-size: 13px; font-weight: 800; color: var(--pink); white-space: nowrap; font-variant-numeric: tabular-nums; background: var(--pink-dim); padding: 3px 9px; border-radius: 8px; letter-spacing: 0.01em; }
+  .step.done .step-time { text-decoration: line-through; color: var(--text3); background: rgba(61,44,78,0.06); }
+  .play-step .step-time { background: rgba(78,205,196,0.2); color: #1E8C82; }
+  .play-step.locked .step-time { background: rgba(61,44,78,0.06); color: var(--text3); }
 
   .play-step { border-color: rgba(78,205,196,0.5) !important; background: linear-gradient(135deg, rgba(78,205,196,0.12), rgba(255,255,255,0.9)); }
   .play-step .step-title { color: #2A9D93; }
