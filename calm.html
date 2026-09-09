@@ -59,6 +59,21 @@
 
   .list { flex: 1; padding: 16px 20px 24px; display: flex; flex-direction: column; gap: 10px; position: relative; z-index: 1; }
 
+  .back-bar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 5; padding: 10px 20px calc(env(safe-area-inset-bottom) + 14px); background: linear-gradient(to top, var(--bg3) 75%, transparent); }
+  .back-btn {
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    background: var(--surface);
+    color: var(--text);
+    text-decoration: none;
+    font-weight: 800; font-size: 16px;
+    padding: 14px 20px;
+    border-radius: 100px;
+    box-shadow: 0 4px 14px rgba(61,44,78,0.15);
+    border: 2px solid rgba(111,168,220,0.35);
+  }
+  .back-btn:active { transform: scale(0.97); }
+  .back-btn .back-icon { font-size: 19px; }
+
   .card {
     display: flex; align-items: center; gap: 14px;
     background: var(--surface);
@@ -89,7 +104,7 @@
   .card.tried .tried-badge { background: linear-gradient(135deg, var(--teal), #3FBFB5); border-color: var(--teal); }
   .card.tried .tried-badge svg { opacity: 1; }
 
-  .footer-note { text-align: center; padding: 4px 30px 18px; font-size: 12px; color: var(--text2); font-weight: 600; line-height: 1.5; position: relative; z-index: 1; }
+  .footer-note { text-align: center; padding: 4px 30px 90px; font-size: 12px; color: var(--text2); font-weight: 600; line-height: 1.5; position: relative; z-index: 1; }
 
   /* Breathing overlay */
   .breathe-overlay { position: fixed; inset: 0; background: linear-gradient(160deg, var(--bg1) 0%, var(--bg2) 50%, var(--bg3) 100%); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 10; padding: 20px; text-align: center; }
@@ -178,6 +193,10 @@
 </div>
 
 <div class="footer-note">You can try more than one. There's no wrong way to feel better. 💙</div>
+
+<div class="back-bar">
+  <a class="back-btn" href="index.html"><span class="back-icon">🏠</span> Back to my morning</a>
+</div>
 
 <div class="breathe-overlay" id="breatheOverlay">
   <div class="breathe-circle-wrap"><div class="breathe-circle"></div></div>
