@@ -1,5 +1,5 @@
-const CACHE = 'dawson-morning-v7';
-const ASSETS = ['./index.html', './manifest.json', './icon-192.png', './icon-512.png'];
+const CACHE = 'dawson-morning-v8';
+const ASSETS = ['./index.html', './manifest.json', './icon-192.png', './icon-512.png', './calm.html', './chores.html'];
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)));
   self.skipWaiting();

@@ -74,6 +74,18 @@
   .back-btn:active { transform: scale(0.97); }
   .back-btn .back-icon { font-size: 19px; }
 
+  .nav-link {
+    position: fixed; top: max(10px, calc(env(safe-area-inset-top) + 6px)); right: 14px;
+    width: 50px; height: 50px; border-radius: 16px;
+    background: linear-gradient(135deg, #FFF3B0, #C8EFC5);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    box-shadow: 0 4px 14px rgba(61,44,78,0.18);
+    text-decoration: none; z-index: 20; gap: 1px;
+  }
+  .nav-link:active { transform: scale(0.94); }
+  .nav-link .nav-icon { font-size: 20px; line-height: 1; }
+  .nav-link .nav-label { font-size: 8px; font-weight: 800; color: #5A7A4A; letter-spacing: 0.01em; }
+
   .card {
     display: flex; align-items: center; gap: 14px;
     background: var(--surface);
@@ -126,6 +138,11 @@
 </style>
 </head>
 <body>
+
+<a class="nav-link" href="chores.html" aria-label="Go to Chores list">
+  <span class="nav-icon">📋</span>
+  <span class="nav-label">Chores</span>
+</a>
 
 <header>
   <div class="header-icon">💙</div>

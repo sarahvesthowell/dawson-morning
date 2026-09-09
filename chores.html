@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#8FD19E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&display=swap" rel="stylesheet">
+<title>Dawson's Chores</title>
+<style>
+  :root {
+    --bg1: #FFF3B0;
+    --bg2: #C8EFC5;
+    --bg3: #BFE3F5;
+    --surface: rgba(255,255,255,0.9);
+    --yellow: #F2C14E;
+    --yellow-dim: rgba(242,193,78,0.2);
+    --green: #6FBF73;
+    --green-dim: rgba(111,191,115,0.18);
+    --teal: #4ECDC4;
+    --teal-dim: rgba(78,205,196,0.16);
+    --blue: #6FA8DC;
+    --blue-dim: rgba(111,168,220,0.16);
+    --text: #3D2C4E;
+    --text2: #7B6B8A;
+    --text3: #B3A6C0;
+    --border: rgba(61,44,78,0.08);
+    --radius: 18px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html, body { height: 100%; overscroll-behavior: none; }
+  body {
+    font-family: 'Baloo 2', -apple-system, 'Helvetica Neue', sans-serif;
+    color: var(--text);
+    display: flex; flex-direction: column; min-height: 100dvh;
+    padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+    background: linear-gradient(160deg, var(--bg1) 0%, var(--bg2) 50%, var(--bg3) 100%);
+    background-attachment: fixed;
+    position: relative;
+    overflow-x: hidden;
+  }
+  body::before, body::after {
+    content: ''; position: fixed; border-radius: 50%; filter: blur(2px); opacity: 0.45; pointer-events: none; z-index: 0;
+  }
+  body::before { width: 160px; height: 160px; background: radial-gradient(circle, #fff 0%, transparent 70%); top: -50px; right: -40px; }
+  body::after { width: 120px; height: 120px; background: radial-gradient(circle, #fff 0%, transparent 70%); bottom: 6%; left: -40px; }
+
+  .nav-link {
+    position: fixed; top: max(10px, calc(env(safe-area-inset-top) + 6px)); right: 14px;
+    width: 50px; height: 50px; border-radius: 16px;
+    background: linear-gradient(135deg, #BFE1F5, #D6C8F0);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    box-shadow: 0 4px 14px rgba(61,44,78,0.18);
+    text-decoration: none; z-index: 20; gap: 1px;
+  }
+  .nav-link:active { transform: scale(0.94); }
+  .nav-link .nav-icon { font-size: 20px; line-height: 1; }
+  .nav-link .nav-label { font-size: 8px; font-weight: 800; color: #4A6B8A; letter-spacing: 0.01em; }
+
+  header { padding: 22px 20px 4px; position: relative; z-index: 1; text-align: center; }
+  .header-icon { font-size: 36px; }
+  .greeting { font-size: 14px; color: var(--text2); font-weight: 700; margin-top: 4px; }
+  .name { font-size: 26px; font-weight: 800; color: var(--text); letter-spacing: -0.5px; margin-top: 2px; }
+  .name span { color: var(--green); }
+  .sub { font-size: 13px; color: var(--text2); font-weight: 600; margin-top: 6px; line-height: 1.4; }
+
+  .progress-bar { height: 10px; background: rgba(255,255,255,0.5); margin: 16px 20px 0; border-radius: 10px; overflow: hidden; box-shadow: inset 0 1px 3px rgba(61,44,78,0.1); position: relative; z-index: 1; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, var(--yellow), var(--green), var(--teal)); border-radius: 10px; transition: width 0.5s cubic-bezier(.34,1.56,.64,1); }
+
+  .list { flex: 1; padding: 16px 20px 24px; display: flex; flex-direction: column; gap: 10px; position: relative; z-index: 1; }
+
+  .card {
+    display: flex; align-items: center; gap: 14px;
+    background: var(--surface);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    border: 2px solid transparent;
+    box-shadow: 0 3px 10px rgba(61,44,78,0.07);
+    transition: transform 0.15s ease, box-shadow 0.2s, opacity 0.2s, border-color 0.2s;
+    cursor: pointer; user-select: none; -webkit-user-select: none;
+  }
+  .card:active { transform: scale(0.97); }
+  .card.done { opacity: 0.55; box-shadow: none; }
+
+  .card-icon { width: 46px; height: 46px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0; }
+  .card:nth-of-type(1) .card-icon { background: var(--yellow-dim); }
+  .card:nth-of-type(2) .card-icon { background: var(--green-dim); }
+  .card:nth-of-type(3) .card-icon { background: var(--blue-dim); }
+  .card:nth-of-type(4) .card-icon { background: var(--teal-dim); }
+
+  .card-body { flex: 1; min-width: 0; }
+  .card-title { font-size: 16px; font-weight: 700; color: var(--text); line-height: 1.25; }
+  .card.done .card-title { color: var(--text3); text-decoration: line-through; }
+  .card-sub { font-size: 12.5px; color: var(--text2); margin-top: 2px; font-weight: 500; }
+  .card.done .card-sub { color: var(--text3); }
+
+  .check { width: 30px; height: 30px; border-radius: 50%; border: 3px solid #E4D9EE; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.2s; }
+  .check svg { opacity: 0; transition: opacity 0.2s; transform: scale(0.6); }
+  .card.done .check { background: linear-gradient(135deg, var(--green), #5AA85E); border-color: var(--green); }
+  .card.done .check svg { opacity: 1; transform: scale(1); }
+
+  .win-screen { display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; flex: 1; padding: 40px 30px; gap: 14px; position: relative; z-index: 1; }
+  .win-screen.show { display: flex; }
+  .win-icon { font-size: 84px; animation: bounce 1s ease infinite; }
+  @keyframes bounce { 0%,100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-14px) rotate(-6deg); } }
+  .win-title { font-size: 28px; font-weight: 800; color: var(--green); letter-spacing: -0.5px; }
+  .win-sub { font-size: 16px; color: var(--text2); line-height: 1.5; font-weight: 600; }
+
+  .list-wrap { display: flex; flex-direction: column; flex: 1; }
+
+  .back-bar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 5; padding: 10px 20px calc(env(safe-area-inset-bottom) + 14px); background: linear-gradient(to top, var(--bg3) 75%, transparent); }
+  .back-btn {
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    background: var(--surface); color: var(--text); text-decoration: none;
+    font-weight: 800; font-size: 16px; padding: 14px 20px; border-radius: 100px;
+    box-shadow: 0 4px 14px rgba(61,44,78,0.15);
+    border: 2px solid rgba(111,191,115,0.35);
+  }
+  .back-btn:active { transform: scale(0.97); }
+  .back-btn .back-icon { font-size: 19px; }
+
+  .list { padding-bottom: 90px; }
+
+  .confetti { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 5; overflow: hidden; }
+  .confetti span { position: absolute; top: -20px; font-size: 20px; animation: fall linear forwards; }
+  @keyframes fall { to { transform: translateY(110vh) rotate(360deg); opacity: 0.3; } }
+</style>
+</head>
+<body>
+
+<a class="nav-link" href="calm.html" aria-label="Feeling upset? Go to Calm Corner">
+  <span class="nav-icon">💙</span>
+  <span class="nav-label">Calm</span>
+</a>
+
+<header>
+  <div class="header-icon">🌱</div>
+  <div class="greeting">Great things, one step at a time</div>
+  <div class="name">Dawson<span>'s</span> Chores</div>
+  <div class="sub">Check off today's chores below</div>
+</header>
+
+<div class="progress-bar">
+  <div class="progress-fill" id="progress" style="width:0%"></div>
+</div>
+
+<div class="list-wrap">
+  <div class="list" id="list">
+
+    <div class="card" id="ch0" onclick="toggle(0)">
+      <div class="card-icon">🛏️</div>
+      <div class="card-body">
+        <div class="card-title">Make bed</div>
+        <div class="card-sub">Pull up the covers, fluff the pillow</div>
+      </div>
+      <div class="check"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><polyline points="2,7 5.5,10.5 12,3.5" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    </div>
+
+    <div class="card" id="ch1" onclick="toggle(1)">
+      <div class="card-icon">🧹</div>
+      <div class="card-body">
+        <div class="card-title">Clean room</div>
+        <div class="card-sub">Toys away, floor clear</div>
+      </div>
+      <div class="check"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><polyline points="2,7 5.5,10.5 12,3.5" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    </div>
+
+    <div class="card" id="ch2" onclick="toggle(2)">
+      <div class="card-icon">🍽️</div>
+      <div class="card-body">
+        <div class="card-title">Unload dishwasher</div>
+        <div class="card-sub">Put everything where it goes</div>
+      </div>
+      <div class="check"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><polyline points="2,7 5.5,10.5 12,3.5" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    </div>
+
+    <div class="card" id="ch3" onclick="toggle(3)">
+      <div class="card-icon">📖</div>
+      <div class="card-body">
+        <div class="card-title">Read 20 minutes</div>
+        <div class="card-sub">Any book you like</div>
+      </div>
+      <div class="check"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><polyline points="2,7 5.5,10.5 12,3.5" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    </div>
+
+  </div>
+
+  <div class="win-screen" id="win">
+    <div class="win-icon">🌟</div>
+    <div class="win-title">All done, Dawson!</div>
+    <div class="win-sub">Every chore is checked off for today.<br>Awesome job!</div>
+  </div>
+</div>
+
+<div class="back-bar">
+  <a class="back-btn" href="index.html"><span class="back-icon">🏠</span> Home</a>
+</div>
+
+<script>
+const TOTAL = 4;
+const CONFETTI_EMOJI = ['🎉','⭐','🌟','✨','🌈'];
+
+function todayKey() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+
+function loadState() {
+  let stored = null;
+  try {
+    stored = JSON.parse(localStorage.getItem('dawsonChores') || 'null');
+  } catch (e) {}
+  const today = todayKey();
+  if (!stored || stored.date !== today || !Array.isArray(stored.done) || stored.done.length !== TOTAL) {
+    stored = { date: today, done: new Array(TOTAL).fill(false) };
+    saveState(stored);
+  }
+  return stored;
+}
+
+function saveState(state) {
+  try {
+    localStorage.setItem('dawsonChores', JSON.stringify(state));
+  } catch (e) {}
+}
+
+let state = loadState();
+
+function render() {
+  for (let i = 0; i < TOTAL; i++) {
+    document.getElementById('ch' + i).classList.toggle('done', state.done[i]);
+  }
+  const count = state.done.filter(Boolean).length;
+  document.getElementById('progress').style.width = (count / TOTAL * 100) + '%';
+  if (state.done.every(Boolean)) {
+    document.getElementById('list').style.display = 'none';
+    document.getElementById('win').classList.add('show');
+  } else {
+    document.getElementById('list').style.display = 'flex';
+    document.getElementById('win').classList.remove('show');
+  }
+}
+
+function toggle(i) {
+  state.done[i] = !state.done[i];
+  saveState(state);
+  const el = document.getElementById('ch' + i);
+  el.classList.toggle('done', state.done[i]);
+  if (state.done[i]) burstConfetti(el);
+  const count = state.done.filter(Boolean).length;
+  document.getElementById('progress').style.width = (count / TOTAL * 100) + '%';
+  if (state.done.every(Boolean)) {
+    setTimeout(() => {
+      document.getElementById('list').style.display = 'none';
+      document.getElementById('win').classList.add('show');
+      bigConfetti();
+    }, 300);
+  }
+}
+
+function burstConfetti(el) {
+  const rect = el.getBoundingClientRect();
+  const layer = document.createElement('div');
+  layer.className = 'confetti';
+  for (let i = 0; i < 10; i++) {
+    const s = document.createElement('span');
+    s.textContent = CONFETTI_EMOJI[Math.floor(Math.random() * CONFETTI_EMOJI.length)];
+    s.style.left = (rect.left + Math.random() * rect.width) + 'px';
+    s.style.top = (rect.top - 10) + 'px';
+    s.style.animationDuration = (0.9 + Math.random() * 0.6) + 's';
+    layer.appendChild(s);
+  }
+  document.body.appendChild(layer);
+  setTimeout(() => layer.remove(), 1600);
+}
+
+function bigConfetti() {
+  const layer = document.createElement('div');
+  layer.className = 'confetti';
+  for (let i = 0; i < 30; i++) {
+    const s = document.createElement('span');
+    s.textContent = CONFETTI_EMOJI[Math.floor(Math.random() * CONFETTI_EMOJI.length)];
+    s.style.left = Math.random() * 100 + 'vw';
+    s.style.top = '-20px';
+    s.style.fontSize = (16 + Math.random() * 14) + 'px';
+    s.style.animationDuration = (1.6 + Math.random() * 1.2) + 's';
+    s.style.animationDelay = (Math.random() * 0.6) + 's';
+    layer.appendChild(s);
+  }
+  document.body.appendChild(layer);
+  setTimeout(() => layer.remove(), 3200);
+}
+
+render();
+</script>
+</body>
+</html>
