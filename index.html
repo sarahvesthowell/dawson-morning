@@ -152,6 +152,7 @@
   .nav-link .nav-label { font-size: 7px; font-weight: 800; color: #4A6B8A; letter-spacing: 0.01em; }
   .nav-link.calm { background: linear-gradient(135deg, #BFE1F5, #D6C8F0); }
   .nav-link.chores { background: linear-gradient(135deg, #FFF3B0, #C8EFC5); }
+  .nav-link.stars { background: linear-gradient(135deg, #FFE9A8, #D9B8F0); }
 </style>
 </head>
 <body>
@@ -170,6 +171,10 @@
       <a class="nav-link chores" href="chores.html" aria-label="Go to Chores list">
         <span class="nav-icon">📋</span>
         <span class="nav-label">Chores</span>
+      </a>
+      <a class="nav-link stars" href="rewards.html" aria-label="Go to Rewards">
+        <span class="nav-icon">⭐</span>
+        <span class="nav-label">Stars</span>
       </a>
     </div>
   </div>
@@ -321,10 +326,26 @@ function updateProgress() {
   document.getElementById('progress').style.width = (count / TOTAL * 100) + '%';
 }
 
+function todayKey() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+
+function markRewardDay(field) {
+  let data;
+  try { data = JSON.parse(localStorage.getItem('dawsonRewards') || 'null'); } catch (e) { data = null; }
+  if (!data || typeof data !== 'object' || !data.history) data = { history: {} };
+  const key = todayKey();
+  if (!data.history[key]) data.history[key] = { morning: false, chores: false };
+  data.history[key][field] = true;
+  try { localStorage.setItem('dawsonRewards', JSON.stringify(data)); } catch (e) {}
+}
+
 function showWin() {
   document.getElementById('steps').style.display = 'none';
   const win = document.getElementById('win');
   win.classList.add('show');
+  markRewardDay('morning');
   const now = new Date();
   const h = now.getHours(), m = now.getMinutes().toString().padStart(2,'0');
   const ap = h >= 12 ? 'pm' : 'am';
