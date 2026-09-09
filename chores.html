@@ -240,7 +240,7 @@ function markRewardDay(field) {
   try { data = JSON.parse(localStorage.getItem('dawsonRewards') || 'null'); } catch (e) { data = null; }
   if (!data || typeof data !== 'object' || !data.history) data = { history: {} };
   const key = todayKey();
-  if (!data.history[key]) data.history[key] = { morning: false, chores: false };
+  if (!data.history[key]) data.history[key] = { morning: false, chores: false, bedtime: false };
   data.history[key][field] = true;
   try { localStorage.setItem('dawsonRewards', JSON.stringify(data)); } catch (e) {}
 }

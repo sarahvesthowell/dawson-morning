@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="theme-color" content="#FF6B9D">
+<meta name="theme-color" content="#FF6B9D" id="themeColorMeta">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Morning">
+<meta name="apple-mobile-web-app-title" content="Routine">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -71,6 +71,7 @@
   .progress-fill { height: 100%; background: linear-gradient(90deg, var(--pink), var(--orange), var(--teal)); border-radius: 10px; transition: width 0.5s cubic-bezier(.34,1.56,.64,1); }
 
   .steps { flex: 1; padding: 8px 16px 10px; display: flex; flex-direction: column; justify-content: center; gap: 6px; position: relative; z-index: 1; }
+  .steps.long { justify-content: flex-start; padding-bottom: 20px; }
 
   .step {
     display: flex; align-items: center; gap: 12px;
@@ -87,11 +88,11 @@
 
   .step-icon-col { display: flex; flex-direction: column; align-items: center; gap: 2px; flex-shrink: 0; }
   .step-icon-wrap { width: 36px; height: 36px; border-radius: 11px; display: flex; align-items: center; justify-content: center; font-size: 19px; flex-shrink: 0; }
-  .step:nth-of-type(1) .step-icon-wrap { background: var(--pink-dim); }
-  .step:nth-of-type(2) .step-icon-wrap { background: var(--orange-dim); }
-  .step:nth-of-type(3) .step-icon-wrap { background: var(--purple-dim); }
-  .step:nth-of-type(4) .step-icon-wrap { background: var(--blue-dim); }
-  .step:nth-of-type(5) .step-icon-wrap { background: var(--teal-dim); }
+  .icon-c0 { background: var(--pink-dim); }
+  .icon-c1 { background: var(--orange-dim); }
+  .icon-c2 { background: var(--purple-dim); }
+  .icon-c3 { background: var(--blue-dim); }
+  .icon-c4 { background: var(--teal-dim); }
 
   .check { width: var(--check-size); height: var(--check-size); border-radius: 50%; border: 3px solid #E4D9EE; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.2s; order: 3; }
   .check svg { opacity: 0; transition: opacity 0.2s; transform: scale(0.6); }
@@ -160,8 +161,8 @@
 <header>
   <div class="header-top">
     <div>
-      <div class="greeting">Good morning 👋</div>
-      <div class="name">Dawson<span>'s</span> morning</div>
+      <div class="greeting" id="pageGreeting">Good morning 👋</div>
+      <div class="name" id="pageName">Dawson<span>'s</span> morning</div>
     </div>
     <div class="nav-stack">
       <a class="nav-link calm" href="calm.html" aria-label="Feeling upset? Go to Calm Corner">
@@ -181,8 +182,8 @@
   <div class="clock-row">
     <div class="clock" id="clock">6:30</div>
     <div class="depart-info">
-      <div class="depart-label">leave by</div>
-      <div class="depart-time">7:30</div>
+      <div class="depart-label" id="departLabel">leave by</div>
+      <div class="depart-time" id="departTime">7:30</div>
       <div class="countdown" id="countdown"></div>
     </div>
   </div>
@@ -193,82 +194,129 @@
 </div>
 
 <div class="steps-wrap">
-  <div class="steps" id="steps">
-
-    <div class="step" id="s0" onclick="toggle(0)">
-      <div class="step-icon-col"><div class="step-icon-wrap">👕</div><div class="step-time">by 6:35</div></div>
-      <div class="step-body">
-        <div class="step-title">Get dressed</div>
-        <div class="step-sub">Clothes are already out</div>
-      </div>
-      <div class="check"><svg width="16" height="16" viewBox="0 0 14 14" fill="none"><polyline points="2,7 5.5,10.5 12,3.5" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-    </div>
-
-    <div class="step" id="s1" onclick="toggle(1)">
-      <div class="step-icon-col"><div class="step-icon-wrap">🥣</div><div class="step-time">by 6:55</div></div>
-      <div class="step-body">
-        <div class="step-title">Breakfast + Miralax water</div>
-        <div class="step-sub">Drink them together</div>
-      </div>
-      <div class="check"><svg width="16" height="16" viewBox="0 0 14 14" fill="none"><polyline points="2,7 5.5,10.5 12,3.5" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-    </div>
-
-    <div class="step" id="s2" onclick="toggle(2)">
-      <div class="step-icon-col"><div class="step-icon-wrap">🚽</div><div class="step-time">by 7:00</div></div>
-      <div class="step-body">
-        <div class="step-title">Potty sit</div>
-        <div class="step-sub">5 minutes</div>
-      </div>
-      <div class="check"><svg width="16" height="16" viewBox="0 0 14 14" fill="none"><polyline points="2,7 5.5,10.5 12,3.5" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-    </div>
-
-    <div class="step" id="s3" onclick="toggle(3)">
-      <div class="step-icon-col"><div class="step-icon-wrap">🦷</div><div class="step-time">by 7:05</div></div>
-      <div class="step-body">
-        <div class="step-title">Brush teeth + floss</div>
-        <div class="step-sub">Both!</div>
-      </div>
-      <div class="check"><svg width="16" height="16" viewBox="0 0 14 14" fill="none"><polyline points="2,7 5.5,10.5 12,3.5" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-    </div>
-
-    <div class="step" id="s4" onclick="toggle(4)">
-      <div class="step-icon-col"><div class="step-icon-wrap">🎒</div><div class="step-time">by 7:15</div></div>
-      <div class="step-body">
-        <div class="step-title">Shoes + backpack</div>
-        <div class="step-sub">Bag was packed last night</div>
-      </div>
-      <div class="check"><svg width="16" height="16" viewBox="0 0 14 14" fill="none"><polyline points="2,7 5.5,10.5 12,3.5" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-    </div>
-
-    <div class="step play-step locked" id="s5" onclick="toggle(5)">
-      <div class="step-icon-col"><div class="step-icon-wrap" id="s5-icon">🔒</div><div class="step-time">by 7:30</div></div>
-      <div class="step-body">
-        <div class="step-title">Free play — earned!</div>
-        <div class="step-sub" id="s5-sub">Finish everything above to unlock</div>
-      </div>
-      <div class="check"><svg width="16" height="16" viewBox="0 0 14 14" fill="none"><polyline points="2,7 5.5,10.5 12,3.5" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-    </div>
-
-  </div>
+  <div class="steps" id="steps"></div>
 
   <div class="win-screen" id="win">
-    <div class="win-icon">🎉</div>
-    <div class="win-title">You did it, Dawson!</div>
-    <div class="win-sub">Everything's done and you're ready to go.<br>Have an awesome day!</div>
+    <div class="win-icon" id="winIcon">🎉</div>
+    <div class="win-title" id="winTitle">You did it, Dawson!</div>
+    <div class="win-sub" id="winSub">Everything's done and you're ready to go.<br>Have an awesome day!</div>
     <div class="win-time" id="win-time"></div>
     <button class="reset-btn" onclick="reset()">Reset for tomorrow</button>
   </div>
 </div>
 
 <script>
-const TOTAL = 6;
+const ROUTINES = {
+  morning: {
+    greeting: 'Good morning 👋',
+    name: 'morning',
+    endLabel: 'leave by',
+    endTime: '7:30',
+    endHour: 7, endMinute: 30,
+    dueText: 'Time to go!',
+    rewardField: 'morning',
+    lockIndex: 5,
+    lockedIcon: '🔒',
+    unlockedIcon: '🌟',
+    lockedSub: 'Finish everything above to unlock',
+    unlockedSub: '15 minutes, anything you want',
+    winIcon: '🎉',
+    winTitle: 'You did it, Dawson!',
+    winSub: "Everything's done and you're ready to go.<br>Have an awesome day!",
+    resetLabel: 'Reset for tomorrow',
+    palette: { bg1: '#FFE29A', bg2: '#FFB3C6', bg3: '#B5EAD7', pink: '#FF6B9D', 'pink-dim': 'rgba(255,107,157,0.14)', orange: '#FFB347' },
+    themeColor: '#FF6B9D',
+    steps: [
+      { icon: '👕', title: 'Get dressed', sub: 'Clothes are already out', time: '6:35' },
+      { icon: '🥣', title: 'Breakfast + Miralax water', sub: 'Drink them together', time: '6:55' },
+      { icon: '🚽', title: 'Potty sit', sub: '5 minutes', time: '7:00' },
+      { icon: '🦷', title: 'Brush teeth + floss', sub: 'Both!', time: '7:05' },
+      { icon: '🎒', title: 'Shoes + backpack', sub: 'Bag was packed last night', time: '7:15' },
+      { icon: '🌟', title: 'Free play — earned!', sub: '15 minutes, anything you want', time: '7:30' }
+    ]
+  },
+  bedtime: {
+    greeting: 'Good evening 🌙',
+    name: 'bedtime',
+    endLabel: 'lights out',
+    endTime: '8:30',
+    endHour: 20, endMinute: 30,
+    dueText: 'Lights out!',
+    rewardField: 'bedtime',
+    lockIndex: 7,
+    lockedIcon: '🔒',
+    unlockedIcon: '🎮',
+    lockedSub: 'Finish your bedtime routine to unlock',
+    unlockedSub: '20 minutes, then lights out',
+    winIcon: '🌙',
+    winTitle: 'Great job, Dawson!',
+    winSub: "Bedtime routine complete.<br>Sweet dreams!",
+    resetLabel: 'Reset for tonight',
+    palette: { bg1: '#B8C6F2', bg2: '#C9A6E8', bg3: '#6E8FD6', pink: '#8B6FD6', 'pink-dim': 'rgba(139,111,214,0.16)', orange: '#F2A93B' },
+    themeColor: '#8B6FD6',
+    steps: [
+      { icon: '🙏', title: 'Prayer', sub: '', time: '7:00' },
+      { icon: '🚿', title: 'Shower and pajamas', sub: '', time: '7:05' },
+      { icon: '💊', title: 'Medicine', sub: '', time: '7:20' },
+      { icon: '🦷', title: 'Brush teeth and floss', sub: '', time: '7:25' },
+      { icon: '🚽', title: 'Potty sit', sub: '', time: '7:30' },
+      { icon: '📖', title: 'Read for 20 minutes', sub: '', time: '7:35' },
+      { icon: '❤️', title: 'Special time', sub: '', time: '7:55' },
+      { icon: '🎮', title: 'Game Boy — earned!', sub: '20 minutes, then lights out', time: '8:20' },
+      { icon: '🌙', title: 'Lights out', sub: '', time: '8:30' }
+    ]
+  }
+};
+
+const forcedRoutine = new URLSearchParams(location.search).get('routine');
+const routineKey = (forcedRoutine === 'morning' || forcedRoutine === 'bedtime')
+  ? forcedRoutine
+  : ((new Date().getHours() < 12) ? 'morning' : 'bedtime');
+const ROUTINE = ROUTINES[routineKey];
+const TOTAL = ROUTINE.steps.length;
 let done = new Array(TOTAL).fill(false);
 const CONFETTI_EMOJI = ['🎉','⭐','🎈','✨','🌈','🎊'];
+
+function applyTheme() {
+  const root = document.documentElement.style;
+  for (const key in ROUTINE.palette) {
+    root.setProperty('--' + key, ROUTINE.palette[key]);
+  }
+  document.getElementById('themeColorMeta').setAttribute('content', ROUTINE.themeColor);
+  document.title = `Dawson's ${routineKey === 'morning' ? 'Morning' : 'Bedtime'}`;
+  document.getElementById('pageGreeting').textContent = ROUTINE.greeting;
+  document.getElementById('pageName').innerHTML = `Dawson<span>'s</span> ${ROUTINE.name}`;
+  document.getElementById('departLabel').textContent = ROUTINE.endLabel;
+  document.getElementById('departTime').textContent = ROUTINE.endTime;
+}
+
+function renderSteps() {
+  const stepsEl = document.getElementById('steps');
+  if (TOTAL > 6) stepsEl.classList.add('long');
+
+  stepsEl.innerHTML = ROUTINE.steps.map((step, i) => {
+    const isLock = ROUTINE.lockIndex === i;
+    const icon = isLock ? ROUTINE.lockedIcon : step.icon;
+    const sub = isLock ? ROUTINE.lockedSub : step.sub;
+    const classes = ['step'];
+    if (isLock) classes.push('play-step', 'locked');
+    const subHtml = sub ? `<div class="step-sub" id="sub${i}">${sub}</div>` : `<div class="step-sub" id="sub${i}"></div>`;
+    return `
+    <div class="${classes.join(' ')}" id="s${i}" onclick="toggle(${i})">
+      <div class="step-icon-col"><div class="step-icon-wrap ${isLock ? '' : 'icon-c' + (i % 5)}" id="icon${i}">${icon}</div><div class="step-time">by ${step.time}</div></div>
+      <div class="step-body">
+        <div class="step-title">${step.title}</div>
+        ${subHtml}
+      </div>
+      <div class="check"><svg width="16" height="16" viewBox="0 0 14 14" fill="none"><polyline points="2,7 5.5,10.5 12,3.5" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    </div>`;
+  }).join('');
+}
 
 function toggle(i) {
   const el = document.getElementById('s' + i);
 
-  if (i === 5 && el.classList.contains('locked')) {
+  if (i === ROUTINE.lockIndex && el.classList.contains('locked')) {
     el.classList.remove('shake');
     void el.offsetWidth;
     el.classList.add('shake');
@@ -279,27 +327,28 @@ function toggle(i) {
   el.classList.toggle('done', done[i]);
   if (done[i]) burstConfetti(el);
 
-  if (i < 5) updatePlayLock();
+  if (ROUTINE.lockIndex != null && i !== ROUTINE.lockIndex) updatePlayLock();
   updateProgress();
   if (done.every(Boolean)) showWin();
 }
 
 function updatePlayLock() {
-  const ready = done.slice(0, 5).every(Boolean);
-  const play = document.getElementById('s5');
-  const icon = document.getElementById('s5-icon');
-  const sub = document.getElementById('s5-sub');
+  const lockIndex = ROUTINE.lockIndex;
+  const ready = done.slice(0, lockIndex).every(Boolean);
+  const play = document.getElementById('s' + lockIndex);
+  const icon = document.getElementById('icon' + lockIndex);
+  const sub = document.getElementById('sub' + lockIndex);
 
   if (ready) {
     play.classList.remove('locked');
-    icon.textContent = '🌟';
-    sub.textContent = '15 minutes, anything you want';
+    icon.textContent = ROUTINE.unlockedIcon;
+    sub.textContent = ROUTINE.unlockedSub;
   } else {
     play.classList.add('locked');
-    icon.textContent = '🔒';
-    sub.textContent = 'Finish everything above to unlock';
-    if (done[5]) {
-      done[5] = false;
+    icon.textContent = ROUTINE.lockedIcon;
+    sub.textContent = ROUTINE.lockedSub;
+    if (done[lockIndex]) {
+      done[lockIndex] = false;
       play.classList.remove('done');
     }
   }
@@ -336,7 +385,7 @@ function markRewardDay(field) {
   try { data = JSON.parse(localStorage.getItem('dawsonRewards') || 'null'); } catch (e) { data = null; }
   if (!data || typeof data !== 'object' || !data.history) data = { history: {} };
   const key = todayKey();
-  if (!data.history[key]) data.history[key] = { morning: false, chores: false };
+  if (!data.history[key]) data.history[key] = { morning: false, chores: false, bedtime: false };
   data.history[key][field] = true;
   try { localStorage.setItem('dawsonRewards', JSON.stringify(data)); } catch (e) {}
 }
@@ -345,7 +394,11 @@ function showWin() {
   document.getElementById('steps').style.display = 'none';
   const win = document.getElementById('win');
   win.classList.add('show');
-  markRewardDay('morning');
+  markRewardDay(ROUTINE.rewardField);
+  document.getElementById('winIcon').textContent = ROUTINE.winIcon;
+  document.getElementById('winTitle').textContent = ROUTINE.winTitle;
+  document.getElementById('winSub').innerHTML = ROUTINE.winSub;
+  document.querySelector('.reset-btn').textContent = ROUTINE.resetLabel;
   const now = new Date();
   const h = now.getHours(), m = now.getMinutes().toString().padStart(2,'0');
   const ap = h >= 12 ? 'pm' : 'am';
@@ -372,7 +425,7 @@ function reset() {
   for (let i = 0; i < TOTAL; i++) {
     document.getElementById('s' + i).classList.remove('done');
   }
-  updatePlayLock();
+  if (ROUTINE.lockIndex != null) updatePlayLock();
   document.getElementById('progress').style.width = '0%';
   document.getElementById('steps').style.display = 'flex';
   document.getElementById('win').classList.remove('show');
@@ -386,20 +439,23 @@ function tick() {
   document.getElementById('clock').textContent = `${h12}:${ms}`;
 
   const depart = new Date(now);
-  depart.setHours(7, 30, 0, 0);
+  depart.setHours(ROUTINE.endHour, ROUTINE.endMinute, 0, 0);
   const diff = Math.round((depart - now) / 60000);
   const cd = document.getElementById('countdown');
   if (diff > 0) {
     cd.textContent = `${diff} min left`;
     cd.className = 'countdown' + (diff <= 10 ? ' urgent' : '');
   } else if (diff === 0) {
-    cd.textContent = 'Time to go!';
+    cd.textContent = ROUTINE.dueText;
     cd.className = 'countdown urgent';
   } else {
     cd.textContent = '';
   }
 }
 
+applyTheme();
+renderSteps();
+if (ROUTINE.lockIndex != null) updatePlayLock();
 tick();
 setInterval(tick, 10000);
 
