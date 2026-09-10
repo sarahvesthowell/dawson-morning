@@ -86,8 +86,8 @@
   .step:active { transform: scale(0.97); }
   .step.done { opacity: 0.55; box-shadow: none; }
 
-  .step-icon-col { display: flex; flex-direction: column; align-items: center; gap: 2px; flex-shrink: 0; }
   .step-icon-wrap { width: 36px; height: 36px; border-radius: 11px; display: flex; align-items: center; justify-content: center; font-size: 19px; flex-shrink: 0; }
+  .check-col { display: flex; flex-direction: column; align-items: center; gap: 4px; flex-shrink: 0; }
   .icon-c0 { background: var(--pink-dim); }
   .icon-c1 { background: var(--orange-dim); }
   .icon-c2 { background: var(--purple-dim); }
@@ -309,12 +309,15 @@ function renderSteps() {
     const subHtml = sub ? `<div class="step-sub" id="sub${i}">${sub}</div>` : `<div class="step-sub" id="sub${i}"></div>`;
     return `
     <div class="${classes.join(' ')}" id="s${i}" onclick="toggle(${i})">
-      <div class="step-icon-col"><div class="step-icon-wrap ${isLock ? '' : 'icon-c' + (i % 5)}" id="icon${i}">${icon}</div><div class="step-time">by ${step.time}</div></div>
+      <div class="step-icon-wrap ${isLock ? '' : 'icon-c' + (i % 5)}" id="icon${i}">${icon}</div>
       <div class="step-body">
         <div class="step-title">${step.title}</div>
         ${subHtml}
       </div>
-      <div class="check"><svg width="16" height="16" viewBox="0 0 14 14" fill="none"><polyline points="2,7 5.5,10.5 12,3.5" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="check-col">
+        <div class="step-time">by ${step.time}</div>
+        <div class="check"><svg width="16" height="16" viewBox="0 0 14 14" fill="none"><polyline points="2,7 5.5,10.5 12,3.5" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      </div>
     </div>`;
   }).join('');
 }
