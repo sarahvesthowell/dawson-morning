@@ -70,14 +70,14 @@
   .progress-bar { height: 7px; background: rgba(255,255,255,0.5); margin: 6px 20px 0; border-radius: 10px; overflow: hidden; box-shadow: inset 0 1px 3px rgba(61,44,78,0.1); position: relative; z-index: 1; }
   .progress-fill { height: 100%; background: linear-gradient(90deg, var(--pink), var(--orange), var(--teal)); border-radius: 10px; transition: width 0.5s cubic-bezier(.34,1.56,.64,1); }
 
-  .steps { flex: 1; padding: 8px 16px 10px; display: flex; flex-direction: column; justify-content: center; gap: 6px; position: relative; z-index: 1; }
+  .steps { flex: 1; padding: 8px 16px 10px; display: flex; flex-direction: column; justify-content: center; gap: 9px; position: relative; z-index: 1; }
   .steps.long { justify-content: flex-start; padding-bottom: 20px; }
 
   .step {
-    display: flex; align-items: center; gap: 12px;
+    display: flex; align-items: center; gap: 10px;
     background: var(--surface);
     border-radius: var(--radius);
-    padding: 6px 14px;
+    padding: 10px 14px;
     border: 2px solid transparent;
     box-shadow: 0 3px 10px rgba(61,44,78,0.07);
     transition: transform 0.15s ease, box-shadow 0.2s, opacity 0.2s, border-color 0.2s;
@@ -87,7 +87,7 @@
   .step.done { opacity: 0.55; box-shadow: none; }
 
   .step-icon-wrap { width: 36px; height: 36px; border-radius: 11px; display: flex; align-items: center; justify-content: center; font-size: 19px; flex-shrink: 0; }
-  .check-col { display: flex; flex-direction: column; align-items: center; gap: 4px; flex-shrink: 0; }
+  .check-col { display: flex; flex-direction: row; align-items: center; gap: 6px; flex-shrink: 0; }
   .icon-c0 { background: var(--pink-dim); }
   .icon-c1 { background: var(--orange-dim); }
   .icon-c2 { background: var(--purple-dim); }
@@ -104,7 +104,7 @@
   .step.done .step-title { color: var(--text3); text-decoration: line-through; }
   .step-sub { font-size: 11px; color: var(--text2); margin-top: 1px; font-weight: 500; }
   .step.done .step-sub { color: var(--text3); }
-  .step-time { font-size: 13px; font-weight: 800; color: var(--pink); white-space: nowrap; font-variant-numeric: tabular-nums; background: var(--pink-dim); padding: 3px 9px; border-radius: 8px; letter-spacing: 0.01em; }
+  .step-time { font-size: 12.5px; font-weight: 800; color: var(--pink); white-space: nowrap; font-variant-numeric: tabular-nums; background: var(--pink-dim); padding: 3px 7px; border-radius: 8px; letter-spacing: 0.01em; }
   .step.done .step-time { text-decoration: line-through; color: var(--text3); background: rgba(61,44,78,0.06); }
   .play-step .step-time { background: rgba(78,205,196,0.2); color: #1E8C82; }
   .play-step.locked .step-time { background: rgba(61,44,78,0.06); color: var(--text3); }
