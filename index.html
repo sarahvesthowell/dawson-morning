@@ -56,7 +56,8 @@
 
   header { padding: 8px 20px 0; position: relative; z-index: 1; }
   .greeting { font-size: 11px; color: var(--text2); font-weight: 700; margin-bottom: 0; }
-  .name { font-size: 21px; font-weight: 800; color: var(--text); letter-spacing: -0.5px; }
+  .name { font-size: 21px; font-weight: 800; color: var(--text); letter-spacing: -0.5px; white-space: nowrap; }
+  .name.long { font-size: 17px; }
   .name span { color: var(--pink); }
 
   .clock-row { display: flex; align-items: center; justify-content: space-between; margin-top: 6px; padding: 6px 14px; background: var(--surface); border-radius: 14px; box-shadow: 0 4px 16px rgba(61,44,78,0.08); }
@@ -235,6 +236,29 @@ const ROUTINES = {
       { icon: '🎒', title: 'Shoes + backpack', sub: 'Bag was packed last night', time: '7:25' }
     ]
   },
+  afternoon: {
+    greeting: 'Welcome home 🎒',
+    name: 'afternoon',
+    endLabel: 'dinner at',
+    endTime: '6:00',
+    endHour: 18, endMinute: 0,
+    dueText: 'Dinner time!',
+    rewardField: 'afternoon',
+    lockIndex: null,
+    winIcon: '🌻',
+    winTitle: 'Awesome afternoon, Dawson!',
+    winSub: "Everything's done and dinner's ready.<br>Great job today!",
+    resetLabel: 'Reset for later',
+    palette: { bg1: '#FFD98A', bg2: '#B8E6B0', bg3: '#8FD4E8', pink: '#F2994A', 'pink-dim': 'rgba(242,153,74,0.16)', orange: '#6FBF73' },
+    themeColor: '#F2994A',
+    steps: [
+      { icon: '🍎', title: 'Snack', sub: 'Refuel after school', time: '3:30' },
+      { icon: '🧹', title: 'Chores', sub: 'Check off your Chores list', time: '3:45' },
+      { icon: '📚', title: 'Quiet time', sub: 'A calm break on your own', time: '4:15' },
+      { icon: '⚽', title: 'Play outside', sub: 'Get some fresh air', time: '4:45' },
+      { icon: '🍽️', title: 'Dinner', sub: 'Time to eat as a family', time: '6:00' }
+    ]
+  },
   bedtime: {
     greeting: 'Good evening 🌙',
     name: 'bedtime',
@@ -268,10 +292,14 @@ const ROUTINES = {
   }
 };
 
+function pickRoutineKey(hour) {
+  if (hour < 14) return 'morning';
+  if (hour < 19) return 'afternoon';
+  return 'bedtime';
+}
+
 const forcedRoutine = new URLSearchParams(location.search).get('routine');
-const routineKey = (forcedRoutine === 'morning' || forcedRoutine === 'bedtime')
-  ? forcedRoutine
-  : ((new Date().getHours() < 12) ? 'morning' : 'bedtime');
+const routineKey = ROUTINES[forcedRoutine] ? forcedRoutine : pickRoutineKey(new Date().getHours());
 const ROUTINE = ROUTINES[routineKey];
 const TOTAL = ROUTINE.steps.length;
 const CONFETTI_EMOJI = ['🎉','⭐','🎈','✨','🌈','🎊'];
@@ -284,9 +312,11 @@ function applyTheme() {
     root.setProperty('--' + key, ROUTINE.palette[key]);
   }
   document.getElementById('themeColorMeta').setAttribute('content', ROUTINE.themeColor);
-  document.title = `Dawson's ${routineKey === 'morning' ? 'Morning' : 'Bedtime'}`;
+  document.title = `Dawson's ${ROUTINE.name.charAt(0).toUpperCase()}${ROUTINE.name.slice(1)}`;
   document.getElementById('pageGreeting').textContent = ROUTINE.greeting;
-  document.getElementById('pageName').innerHTML = `Dawson<span>'s</span> ${ROUTINE.name}`;
+  const nameEl = document.getElementById('pageName');
+  nameEl.innerHTML = `Dawson<span>'s</span> ${ROUTINE.name}`;
+  nameEl.classList.toggle('long', ROUTINE.name.length > 7);
   document.getElementById('departLabel').textContent = ROUTINE.endLabel;
   document.getElementById('departTime').textContent = ROUTINE.endTime;
 }
@@ -413,7 +443,7 @@ function markRewardDay(field) {
   try { data = JSON.parse(localStorage.getItem('dawsonRewards') || 'null'); } catch (e) { data = null; }
   if (!data || typeof data !== 'object' || !data.history) data = { history: {} };
   const key = todayKey();
-  if (!data.history[key]) data.history[key] = { morning: false, chores: false, bedtime: false };
+  if (!data.history[key]) data.history[key] = { morning: false, afternoon: false, chores: false, bedtime: false };
   data.history[key][field] = true;
   try { localStorage.setItem('dawsonRewards', JSON.stringify(data)); } catch (e) {}
 }

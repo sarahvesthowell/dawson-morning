@@ -154,17 +154,17 @@ function loadHistory() {
   return data.history;
 }
 
+const REWARD_FIELDS = ['morning', 'afternoon', 'chores', 'bedtime'];
+
 function dayComplete(entry) {
-  return !!(entry && entry.morning && entry.chores && entry.bedtime);
+  return !!entry && REWARD_FIELDS.every(field => entry[field]);
 }
 
 function computeStars(history) {
   let total = 0;
   for (const key in history) {
     const entry = history[key];
-    if (entry.morning) total++;
-    if (entry.chores) total++;
-    if (entry.bedtime) total++;
+    REWARD_FIELDS.forEach(field => { if (entry[field]) total++; });
   }
   return total;
 }
@@ -196,9 +196,9 @@ function buildWeekStrip(history) {
     d.setDate(d.getDate() - i);
     const key = dateKey(d);
     const entry = history[key] || {};
-    const starsToday = (entry.morning ? 1 : 0) + (entry.chores ? 1 : 0) + (entry.bedtime ? 1 : 0);
+    const starsToday = REWARD_FIELDS.filter(field => entry[field]).length;
     let starClass = '';
-    if (starsToday === 3) starClass = 'full';
+    if (starsToday === REWARD_FIELDS.length) starClass = 'full';
     else if (starsToday >= 1) starClass = 'half';
     const isToday = i === 0;
     cells.push(`<div class="day-card${isToday ? ' today' : ''}">
@@ -213,7 +213,7 @@ function messageFor(streak, total) {
   if (streak >= 7) return "A whole week strong! You're amazing! 🎉";
   if (streak >= 3) return "You're on a roll! Keep it going! 🔥";
   if (total >= 1) return "Nice work! Every star counts. ⭐";
-  return "Finish your morning routine, chores, and bedtime routine to earn your first star!";
+  return "Finish your morning routine, chores, afternoon routine, and bedtime routine to earn your first star!";
 }
 
 const history = loadHistory();
