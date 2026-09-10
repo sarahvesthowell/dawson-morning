@@ -274,8 +274,9 @@ const routineKey = (forcedRoutine === 'morning' || forcedRoutine === 'bedtime')
   : ((new Date().getHours() < 12) ? 'morning' : 'bedtime');
 const ROUTINE = ROUTINES[routineKey];
 const TOTAL = ROUTINE.steps.length;
-let done = new Array(TOTAL).fill(false);
 const CONFETTI_EMOJI = ['🎉','⭐','🎈','✨','🌈','🎊'];
+let routineState;
+let done;
 
 function applyTheme() {
   const root = document.documentElement.style;
@@ -294,12 +295,17 @@ function renderSteps() {
   const stepsEl = document.getElementById('steps');
   if (TOTAL > 6) stepsEl.classList.add('long');
 
+  const lockReady = ROUTINE.lockIndex != null && done.slice(0, ROUTINE.lockIndex).every(Boolean);
+
   stepsEl.innerHTML = ROUTINE.steps.map((step, i) => {
     const isLock = ROUTINE.lockIndex === i;
-    const icon = isLock ? ROUTINE.lockedIcon : step.icon;
-    const sub = isLock ? ROUTINE.lockedSub : step.sub;
+    const locked = isLock && !lockReady;
+    const icon = isLock ? (lockReady ? ROUTINE.unlockedIcon : ROUTINE.lockedIcon) : step.icon;
+    const sub = isLock ? (lockReady ? ROUTINE.unlockedSub : ROUTINE.lockedSub) : step.sub;
     const classes = ['step'];
-    if (isLock) classes.push('play-step', 'locked');
+    if (isLock) classes.push('play-step');
+    if (locked) classes.push('locked');
+    if (done[i]) classes.push('done');
     const subHtml = sub ? `<div class="step-sub" id="sub${i}">${sub}</div>` : `<div class="step-sub" id="sub${i}"></div>`;
     return `
     <div class="${classes.join(' ')}" id="s${i}" onclick="toggle(${i})">
@@ -329,7 +335,31 @@ function toggle(i) {
 
   if (ROUTINE.lockIndex != null && i !== ROUTINE.lockIndex) updatePlayLock();
   updateProgress();
-  if (done.every(Boolean)) showWin();
+  saveRoutineState();
+  if (done.every(Boolean)) celebrate();
+}
+
+function todayKey() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+
+function loadRoutineState() {
+  let stored;
+  try { stored = JSON.parse(localStorage.getItem('dawsonRoutineState') || 'null'); } catch (e) { stored = null; }
+  const today = todayKey();
+  if (stored && stored.date === today && stored.routineKey === routineKey && Array.isArray(stored.done) && stored.done.length === TOTAL) {
+    done = stored.done.slice();
+    routineState = { date: today, routineKey, done, finishedAt: stored.finishedAt || null };
+  } else {
+    done = new Array(TOTAL).fill(false);
+    routineState = { date: today, routineKey, done, finishedAt: null };
+  }
+}
+
+function saveRoutineState() {
+  routineState.done = done;
+  try { localStorage.setItem('dawsonRoutineState', JSON.stringify(routineState)); } catch (e) {}
 }
 
 function updatePlayLock() {
@@ -375,11 +405,6 @@ function updateProgress() {
   document.getElementById('progress').style.width = (count / TOTAL * 100) + '%';
 }
 
-function todayKey() {
-  const d = new Date();
-  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-}
-
 function markRewardDay(field) {
   let data;
   try { data = JSON.parse(localStorage.getItem('dawsonRewards') || 'null'); } catch (e) { data = null; }
@@ -390,20 +415,31 @@ function markRewardDay(field) {
   try { localStorage.setItem('dawsonRewards', JSON.stringify(data)); } catch (e) {}
 }
 
-function showWin() {
-  document.getElementById('steps').style.display = 'none';
-  const win = document.getElementById('win');
-  win.classList.add('show');
-  markRewardDay(ROUTINE.rewardField);
-  document.getElementById('winIcon').textContent = ROUTINE.winIcon;
-  document.getElementById('winTitle').textContent = ROUTINE.winTitle;
-  document.getElementById('winSub').innerHTML = ROUTINE.winSub;
-  document.querySelector('.reset-btn').textContent = ROUTINE.resetLabel;
+function computeFinishText() {
   const now = new Date();
   const h = now.getHours(), m = now.getMinutes().toString().padStart(2,'0');
   const ap = h >= 12 ? 'pm' : 'am';
   const h12 = h % 12 || 12;
-  document.getElementById('win-time').textContent = `Finished at ${h12}:${m}${ap}`;
+  return `Finished at ${h12}:${m}${ap}`;
+}
+
+function applyWinDisplay(finishText) {
+  document.getElementById('steps').style.display = 'none';
+  const win = document.getElementById('win');
+  win.classList.add('show');
+  document.getElementById('winIcon').textContent = ROUTINE.winIcon;
+  document.getElementById('winTitle').textContent = ROUTINE.winTitle;
+  document.getElementById('winSub').innerHTML = ROUTINE.winSub;
+  document.querySelector('.reset-btn').textContent = ROUTINE.resetLabel;
+  document.getElementById('win-time').textContent = finishText || '';
+}
+
+function celebrate() {
+  const finishText = computeFinishText();
+  routineState.finishedAt = finishText;
+  saveRoutineState();
+  markRewardDay(ROUTINE.rewardField);
+  applyWinDisplay(finishText);
   const layer = document.createElement('div');
   layer.className = 'confetti';
   for (let i = 0; i < 30; i++) {
@@ -426,6 +462,8 @@ function reset() {
     document.getElementById('s' + i).classList.remove('done');
   }
   if (ROUTINE.lockIndex != null) updatePlayLock();
+  routineState.finishedAt = null;
+  saveRoutineState();
   document.getElementById('progress').style.width = '0%';
   document.getElementById('steps').style.display = 'flex';
   document.getElementById('win').classList.remove('show');
@@ -454,8 +492,14 @@ function tick() {
 }
 
 applyTheme();
+loadRoutineState();
 renderSteps();
 if (ROUTINE.lockIndex != null) updatePlayLock();
+updateProgress();
+if (done.every(Boolean)) {
+  markRewardDay(ROUTINE.rewardField);
+  applyWinDisplay(routineState.finishedAt || computeFinishText());
+}
 tick();
 setInterval(tick, 10000);
 
