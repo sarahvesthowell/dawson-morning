@@ -1,4 +1,4 @@
-const CACHE = 'dawson-morning-v18';
+const CACHE = 'dawson-morning-v19';
 const ASSETS = ['./index.html', './manifest.json', './icon-192.png', './icon-512.png', './calm.html', './chores.html', './rewards.html'];
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)));
